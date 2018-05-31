@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .map-wrapper{
+            width: 400px;
+            height: 400px;
+            margin: 100px auto;
+        }
+        #draw{
+            background: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="map-wrapper">
+<canvas id="draw" width="400" height="400">你的浏览器不支持HTML5 Canvas！</canvas>
+</div>
+<script>
+    let keyMap = {
+        65: 'left',
+        87: 'top',
+        68: 'right',
+        83: 'bottom'
+    }
+    let wayMap = {
+        left: false,
+        right: false,
+        top: false,
+        bottom: false
+    }
+    const mapWidth = 400;
+    const mapHeight = 400;
+    const roleWidth = 30;
+    const roleHeight = 30;
+    let x = 100;
+    let y = 100;
+    const speed = 6;
+    let ls = 0;
+    let rs = 0;
+    let ts = 0;
+    let bs = 0;
+    // 动画
+    function animate() {
+        reqAnimFrame = window.mozRequestAnimationFrame    ||
+            window.webkitRequestAnimationFrame ||
+            window.msRequestAnimationFrame     ||
+            window.oRequestAnimationFrame
+        ;
+        reqAnimFrame(animate);
+        drawMap();
+        calc();
+    }
+    animate();
+
+    function restartGame() {
+        x = 100;
+        y = 100;
+        ls = 0;
+        rs = 0;
+        ts = 0;
+        bs = 0;
+        wayMap.left = 0;
+        wayMap.right = 0;
+        wayMap.top = 0;
+        wayMap.bottom = 0;
+    }
+    // 画图
+    function drawMap() {
+        var canvas = document.getElementById('draw');
+        var context = canvas.getContext('2d');
+        context.clearRect(0, 0, mapWidth, mapHeight);
+        context.fillStyle = '#fff';
+        context.fillRect(x, y, roleWidth, roleHeight);
+    }
+    // 计算
+    function calc() {
+        ls = wayMap.left ? speed : 0;
+        rs = wayMap.right ? speed : 0;
+        ts = wayMap.top ? speed : 0;
+        bs = wayMap.bottom ? speed : 0;
+        if (x < 0 || x > mapWidth - roleWidth) {
+            restartGame();
+            console.log('you dead');
+        } else {
+            x += (rs - ls);
+        }
+        if (y < 0 || y > mapHeight - roleHeight) {
+            restartGame();
+            console.log('you dead');
+        } else {
+            y += (bs - ts);
+        }
+    }
+    // 按键按下去
+    document.onkeydown = function(e) {
+        var num = window.event ? e.keyCode : e.which;
+        wayMap[keyMap[num]] = true;
+    }
+    // 按键松开
+    document.onkeyup = function (e) {
+        var num = window.event ? e.keyCode : e.which;
+        wayMap[keyMap[num]] = false;
+    }
+    // 鼠标点击
+    document.getElementById('draw').onclick = function (e) {
+        console.log(e.offsetX)
+        console.log(e.offsetY)
+    }
+</script>
+</body>
+</html>
